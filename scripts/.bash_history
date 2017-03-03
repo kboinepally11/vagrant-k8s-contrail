@@ -1,0 +1,3 @@
+ssh root\]\\
+ifconfig 
+exit
