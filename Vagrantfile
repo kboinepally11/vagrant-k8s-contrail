@@ -6,16 +6,30 @@ Vagrant.configure("2") do |config|
   (1..2).each do |id|
 
     controller   = "k8s-master"  + id.to_s
-    controller_ip = ["10.84.29.54"]
+    controller_private_ip = ["192.168.50.4"]
+    #If public IP, give a list of public IP's for your master VM
+    #controller_public_ip = []
 
     config.vm.define controller do |contrail_controller|
-      contrail_controller.vm.box = "grtjn/centos-7.2"
+      contrail_controller.vm.box = "contrail/centos-7"
       contrail_controller.vm.hostname = controller
+      contrail_controller.vm.synced_folder "./shared", "/home/vagrant/"
+
       contrail_controller.ssh.username = 'root'
       contrail_controller.ssh.insert_key = 'true'
-      contrail_controller.ssh.password = 'vagrant'
+      contrail_controller.ssh.password = 'c0ntrail123'
 
-      contrail_controller.vm.network "public_network", ip: "#{controller_ip[id - 1]}", bridge: "em1"
+      #Private network
+      contrail_controller.vm.network "private_network", ip: "#{controller_private_ip[id - 1]}"
+
+      #Public Network
+      ###If public network uncomment the below lines and define varaible controller_public_ip, change the bridge interface according to your host
+      #contrail_controller.vm.network "public_network", ip: "#{controller_public_ip[id - 1]}", bridge: "em1"
+      ####Please change the default gw according to your setup
+      #contrail_controller.vm.provision "shell", inline: "sudo route add default gw 10.87.65.254",
+      #  run: "always"
+      #contrail_controller.vm.provision "shell", inline: "sudo route delete default gw 10.0.2.2",
+      #  run: "always"
 
       contrail_controller.vm.provider "virtualbox" do |vb|
         vb.memory = "16000"
@@ -24,14 +38,8 @@ Vagrant.configure("2") do |config|
 
       contrail_controller.vm.synced_folder "./shared", "/home/vagrant/"
 
-      #shell set default gateway
        
-      contrail_controller.vm.provision "shell", path: "scripts/enable_gw.sh"
-      contrail_controller.vm.provision "shell", inline: "sudo route delete default gw 10.0.2.2",
-        run: "always"
-      contrail_controller.vm.provision "shell", path: "scripts/ssh_access.sh"
       #The below lines need to be deleted
-      contrail_controller.vm.provision "shell", path: "scripts/install_kernel_repo.sh"
       contrail_controller.vm.provision "shell", path: "scripts/install_kubernetes.sh"
       contrail_controller.vm.provision "shell", path: "scripts/kube_init.sh"
 
@@ -39,18 +47,31 @@ Vagrant.configure("2") do |config|
   end
   
   (1..2).each do |id|
-    compute_ip = ["10.84.29.55", "10.84.29.56"]
+    compute_private_ip = ["192.168.50.5", "192.168.50.6"]
+    #If public IP, give a list of public IP's for your master VM
+    #compute_public_ip = []
+
     compute   = "k8s-slave"  + id.to_s
     config.vm.define compute do |contrail_compute|
-      contrail_compute.vm.box = "grtjn/centos-7.2"
+      contrail_compute.vm.box = "contrail/centos-7"
       contrail_compute.vm.hostname = compute
       contrail_compute.vm.synced_folder "./shared", "/home/vagrant/"
 
       contrail_compute.ssh.username = 'root'
-      contrail_compute.ssh.password = 'vagrant'
-      contrail_compute.ssh.private_key_path = './shared/id_rsa'
-      
-      contrail_compute.vm.network "public_network", ip: "#{compute_ip[id - 1]}", bridge: "em1"
+      contrail_compute.ssh.insert_key = 'true'
+      contrail_compute.ssh.password = 'c0ntrail123'
+     
+      #Private Network 
+      contrail_compute.vm.network "private_network", ip: "#{compute_private_ip[id - 1]}"
+
+      #Public Network
+      ###If public network uncomment the below lines and define varaible compute_public_ip, change the bridge interface according to your host
+      #contrail_compute.vm.network "public_network", ip: "#{compute_public_ip[id - 1]}", bridge: "em1"
+      ####Please change the default gw according to your setup
+      #contrail_compute.vm.provision "shell", inline: "sudo route add default gw 10.87.65.254",
+      #  run: "always"
+      #contrail_compute.vm.provision "shell", inline: "sudo route delete default gw 10.0.2.2",
+      #  run: "always"
 
       contrail_compute.vm.provider "virtualbox" do |vb|
         vb.memory = "16000"
@@ -59,11 +80,6 @@ Vagrant.configure("2") do |config|
 
 
       #shell set default gateway
-      contrail_compute.vm.provision "shell", path: "scripts/install_kernel_repo.sh"
-      contrail_compute.vm.provision "shell", path: "scripts/enable_gw.sh"
-      contrail_compute.vm.provision "shell", inline: "sudo route delete default gw 10.0.2.2",
-        run: "always"
-      contrail_compute.vm.provision "shell", path: "scripts/ssh_access.sh"
       contrail_compute.vm.provision "shell", path: "scripts/install_kubernetes.sh"
       contrail_compute.vm.provision "shell", path: "scripts/kube_join.sh"
       contrail_compute.vm.provision "shell", path: "scripts/install_contrail_packages.sh"
