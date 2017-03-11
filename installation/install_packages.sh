@@ -12,4 +12,6 @@ wget -O /var/tmp/vagrant.deb https://releases.hashicorp.com/vagrant/1.9.2/vagran
 dpkg -i /var/tmp/vagrant.deb 
 
 sudo apt-get install -y python-pip
+sudo apt-get install python-dev
 sudo pip install ansible==2.2.1.0
+easy_install markupsafe
