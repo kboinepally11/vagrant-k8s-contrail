@@ -45,22 +45,22 @@ ssh-keygen -t rsa
 cp -r ~/.ssh/id_rsa.pub shared/
 ```
 
-*Copy contrail-ansible repo 
+* Copy contrail-ansible repo 
 ```bash
 scp -r your_user_id@10.84.5.38:/users/mnayakbomman/contrail-ansible/playbooks/. .
 ```
 
-*Download contrail packages[This is a bug which will be fixed later]
+* Download contrail packages[This is a bug which will be fixed later]
 ```bash
 wget -P shared/packages_to_install http://10.84.5.120/github-build/mainline/3041/centos71/mitaka/artifacts/contrail-kube-cni-4.0.0.0-3041.el7.centos.x86_64.rpm
 ```
 
-*Bring up the setup
+* Bring up the setup
 ```bash
 vagrant up
 ```
 
-*Verify the kubernetes cluster and contrail containers
+* Verify the kubernetes cluster and contrail containers
 ```bash
 vagrant ssh k8s-master1
 docker ps -a | grep contrail
