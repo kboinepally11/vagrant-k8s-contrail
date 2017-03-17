@@ -5,7 +5,7 @@
 
 ### Installation steps
 
-* Execute below lines from your command line
+* Update the source list and download git 
 ```bash
 echo 'deb http://01.archive.ubuntu.com/ubuntu/ trusty main restricted universe multiverse' >> /etc/apt/sources.list
 echo 'deb-src http://01.archive.ubuntu.com/ubuntu/ trusty main restricted universe multiverse' >> /etc/apt/sources.list
@@ -19,7 +19,7 @@ sudo git clone https://github.com/madhukar32/vagrant-k8s-contrail.git
 cd vagrant-k8s-contrail
 ```
 
-* Copy the appropriate source repo list and update the system
+* Copy the appropriate source list to the system
 ```bash
 cp installation/ubuntu_source_list /etc/apt/sources.list
 ```
@@ -79,4 +79,16 @@ vagrant ssh k8s-master1
 docker ps -a | grep contrail
 kubectl get nodes
 kubectl get pods --all-namespaces
+```
+
+### Redeploying the cluster
+
+* Bring down the existing cluster
+```bash
+vagrant destroy
+```
+
+* Make changes to your ansible or update contrail version and bring up your cluster
+```bash
+vagrant destroy
 ```
