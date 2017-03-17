@@ -1,7 +1,7 @@
 # Steps to install vagrant based k8s cluster with contrail
 
 ##### Requirements
-* Ubuntu 14.04
+* Ubuntu 14.04.4
 
 ### Installation steps
 
@@ -90,5 +90,5 @@ vagrant destroy
 
 * Make changes to your ansible or update contrail version and bring up your cluster
 ```bash
-vagrant destroy
+vagrant up
 ```
