@@ -42,10 +42,11 @@ vagrant box add contrail/centos-7 virtualbox-centos7.box
 * Generate ssh key and copy it to the shared folder
 ```bash
 ssh-keygen -t rsa
+
 cp -r ~/.ssh/id_rsa.pub shared/
 ```
 
-* Clone or Copy contrail-ansible repo 
+* Clone contrail-ansible from git or Copy contrail-ansible repo from build server 
 ```bash
 git clone https://github.com/Juniper/contrail-ansible
 cp -r contrail-ansible/playbooks/. .
@@ -62,10 +63,12 @@ cp sample-hosts inventory/my-inventory/hosts
 
 * Edit the inventory/my-inventory/group_vars/all.yml
     - Update the contrail_version, to the one which is available to pull from the docker registry (Check [available_contrail_container_tags](http://10.84.34.155:5000/v2/contrail-controller-u14.04/tags/list))
+    - Set contrail_compute_mode to _container_
+    - Set vrouter_physical_interface to _enp0s8_
 
 * Download contrail packages[This is a step to avoid known bug which will be fixed later]
 ```bash
-set CONTRAIL_VERSION=4.0.0.0-3046 BUILD=3046;wget -P shared/packages_to_install http://10.84.5.120/github-build/mainline/${BUILD}/centos71/mitaka/artifacts/contrail-kube-cni-${CONTRAIL_VERSION}.el7.centos.x86_64.rpm
+export CONTRAIL_VERSION=4.0.0.0-3046; export BUILD=3046;wget -P shared/packages_to_install http://10.84.5.120/github-build/mainline/${BUILD}/centos71/mitaka/artifacts/contrail-kube-cni-${CONTRAIL_VERSION}.el7.centos.x86_64.rpm
 ```
 
 * Bring up the setup (This would bring up the kubernetes cluster along with contrail)
@@ -76,7 +79,7 @@ vagrant up
 * Verify the kubernetes cluster and contrail containers
 ```bash
 vagrant ssh k8s-master1
-docker ps -a | grep contrail
+docker ps | grep contrail
 kubectl get nodes
 kubectl get pods --all-namespaces
 ```
@@ -92,3 +95,11 @@ vagrant destroy
 ```bash
 vagrant up
 ```
+
+### FAQ
+
+Q1. Vagrant command to resume provisioning ansible after an error?
+A   vagrant provision --provision-with ansible
+
+Q2. How to look for ports which are forwarded from guest to host
+A   vagrant ports <vm_name>
