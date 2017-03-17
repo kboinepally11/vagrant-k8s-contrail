@@ -68,7 +68,7 @@ cp sample-hosts inventory/my-inventory/hosts
 set CONTRAIL_VERSION=4.0.0.0-3046 BUILD=3046;wget -P shared/packages_to_install http://10.84.5.120/github-build/mainline/${BUILD}/centos71/mitaka/artifacts/contrail-kube-cni-${CONTRAIL_VERSION}.el7.centos.x86_64.rpm
 ```
 
-* Bring up the setup
+* Bring up the setup (This would bring up the kubernetes cluster along with contrail)
 ```bash
 vagrant up
 ```
